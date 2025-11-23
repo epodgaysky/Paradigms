@@ -30,15 +30,16 @@ class Monad {
 
 const fib = (n) => n <= 1 ? n : fib(n - 1) + fib(n - 2);
 
-const memoize = (f) => {
-  const cacheMap = new Map()
+const memoizationMonad = Monad
+    .of(new Map())
+    .chain((cacheMap) => Monad
+        .of((f) => (...args) => {
+            const cacheKey = args.map((arg) => `${typeof arg}-${arg.toString()}`).join('|');
+            if (!cacheMap.has(cacheKey)) cacheMap.set(cacheKey, f(...args))
 
-  return (...args) => {
-    const cacheKey = args.map((arg) => `${typeof arg}-${arg.toString()}`).join('|');
-    if (!cacheMap.has(cacheKey)) cacheMap.set(cacheKey, f(...args))
+            return cacheMap.get(cacheKey)
+        }))
 
-    return cacheMap.get(cacheKey)
-  }
-};
+const memoizedFibonacci = memoizationMonad.ap(Monad.of(fib))
 
-console.log(Monad.of(fib).chain(memoize)(10));
+memoizedFibonacci.ap(Monad.of(10)).chain(console.log)
