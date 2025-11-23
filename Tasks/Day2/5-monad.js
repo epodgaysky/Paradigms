@@ -27,3 +27,18 @@ class Monad {
     return container.map(fn);
   }
 }
+
+const fib = (n) => n <= 1 ? n : fib(n - 1) + fib(n - 2);
+
+const memoize = (f) => {
+  const cacheMap = new Map()
+
+  return (...args) => {
+    const cacheKey = args.map((arg) => arg.toString()).join('|');
+    if (!cacheMap.has(cacheKey)) cacheMap.set(cacheKey, f(...args))
+
+    return cacheMap.get(cacheKey)
+  }
+};
+
+console.log(Monad.of(fib).chain(memoize)(10));

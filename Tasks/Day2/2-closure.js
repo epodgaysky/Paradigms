@@ -18,6 +18,18 @@ class Adder {
   }
 }
 
+const createAdder = (initialValue) => {
+  return {
+    add: function(value) {
+      return createAdder(value + initialValue);
+    },
+    valueOf() {
+      return initialValue;
+    }
+  }
+}
+
 const sum1 = new Adder(1).add(9).add(1).add(7);
-// TODO: sum1 = createAdder(1).add(9).add(1).add(7);
-console.log('Sum:', +sum1);
+const sum2 = createAdder(1).add(9).add(1).add(7);
+console.log('Sum1:', +sum1);
+console.log('Sum2:', +sum2);
